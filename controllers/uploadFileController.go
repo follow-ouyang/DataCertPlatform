@@ -2,13 +2,9 @@ package controllers
 
 import (
 	"DataCertPlatform/models"
-	"crypto/md5"
-	sha2562 "crypto/sha256"
-	"encoding/hex"
+	"DataCertPlatform/utils"
 	"fmt"
 	"github.com/astaxie/beego"
-	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 	"time"
@@ -22,7 +18,7 @@ type UploadFileController struct {
 该post方法用于处理用户在客户端提交的文件
  */
 func (u *UploadFileController) Post() {
-
+	//1、解析客户端提交的文件
 	phone := u.Ctx.Request.PostFormValue("phone")
 	title := u.Ctx.Request.PostFormValue("upload_title")
 	fmt.Println("电子数据标签：",title)
@@ -35,26 +31,17 @@ func (u *UploadFileController) Post() {
 	}
 
 	defer file.Close()
-	//使用io包提供的方法保存文件
+	//调用工具包保存到本地
 	saveFilePath := "static/upload/" + header.Filename
-	saveFile,err := os.OpenFile(saveFilePath,os.O_CREATE|os.O_RDWR,777)
-	if err !=nil {
-		u.Ctx.WriteString("抱歉，电子数据认证失败，请重试")
-		return
-	}
-
-	_,err = io.Copy(saveFile,file)
+	_,err = utils.SaveFile(saveFilePath,file)
 	if err != nil {
-		u.Ctx.WriteString("抱歉，电子数据又认证失败，请重新尝试一下吧")
+		u.Ctx.WriteString("抱歉，文件数据认证失败，请重新长试")
 		return
 	}
 
 	//2、计算文件的SHA256值
-	hash256 := sha2562.New()
-	fileBytes,_ := ioutil.ReadAll(file)
-	hash256.Write(fileBytes)
-	hashBytes := hash256.Sum(nil)
-	fmt.Println("存证的hash值为：",hex.EncodeToString(hashBytes))
+	fileHash,err := utils.Sha256HashReader(file)
+	fmt.Println(fileHash)
 
 	//先查询id
 	user1,err := models.User{Phone:phone}.QueryUserByPhone()
@@ -64,15 +51,16 @@ func (u *UploadFileController) Post() {
 
 	//把上传的文件作为记录保存到数据库中
 	//1、计算md5值
-	md5Hash := md5.New()
-	fileMd5Bytes,err := ioutil.ReadAll(saveFile)
-	md5Hash.Write(fileMd5Bytes)
-	bytes := md5Hash.Sum(nil)
+	md5Hash,err := utils.Sha256HashReader(file)
+	if err != nil {
+		u.Ctx.WriteString("哇！抱歉，电子数据认证又失败了")
+		return
+	}
 	record := models.UploadRecord{
 		UserId:   user1.Id,
 		FileName: header.Filename,
 		FileSize: header.Size,
-		FileCert:hex.EncodeToString(bytes),
+		FileCert: md5Hash,
 		FileTitle: title,
 		CertTime: time.Now().Unix(),
 	}
@@ -80,7 +68,6 @@ func (u *UploadFileController) Post() {
 	_,err = record.SaveRedcord()
 	if err != nil {
 		u.Ctx.WriteString("抱歉，电子数据认证保存失败，请重视")
-		fmt.Println("重视错误：",err.Error())
 		return
 	}
 
@@ -91,8 +78,8 @@ func (u *UploadFileController) Post() {
 		return
 	}
 
-	u.Data["records"] = records
-	u.TplName = "list_recorc.html"
+	u.Data["Records"] = records
+	u.TplName = "list_record.html"
 
 }
 

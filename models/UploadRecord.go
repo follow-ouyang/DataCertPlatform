@@ -23,15 +23,15 @@ type UploadRecord struct {
  */
 func (u UploadRecord) SaveRedcord() (int64,error) {
 	result,err := db_mysql.Db.Exec("insert into upload_record (user_id,file_name,file_size,file_cert,file_title,cert_time)" +
-		"values(?,?,?,?,?,?)",u.Id,u.FileName,u.FileSize,u.FileCert,u.FileTitle,u.CertTime)
+		"values(?,?,?,?,?,?)",u.UserId,u.FileName,u.FileSize,u.FileCert,u.FileTitle,u.CertTime)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("是这里吗：",err.Error())
 		return -1,err
 	}
 
 	id,err := result.RowsAffected()
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("还是这里：",err.Error())
 		return -1,err
 	}
 
