@@ -36,6 +36,7 @@ func Md5HashReader(reader io.Reader) (string,error) {
 func Sha256HashReader(reader io.Reader) (string,error) {
 	sha256Hash := sha2562.New()
 	readerBytes,err := ioutil.ReadAll(reader)
+	//fmt.Println("读取到的文件是：",readerBytes)
 	if err != nil {
 		return "",err
 	}

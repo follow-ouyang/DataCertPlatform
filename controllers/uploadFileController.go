@@ -14,6 +14,7 @@ type UploadFileController struct {
 	beego.Controller
 }
 
+
 /*
 该post方法用于处理用户在客户端提交的文件
  */
@@ -27,6 +28,14 @@ func (u *UploadFileController) Post() {
 	//defer file.Close() //如果u.GetFile有错误，file里面就没有值，这时候会报空指针错误：invaild memory or nil pointer dere...,所以放到下面
 	if err != nil {//解析客户端提交的文件出现错误
 		u.Ctx.WriteString("抱歉，文件解析失败，请重试")
+		return
+	}
+
+	fileName1 := strings.Split(header.Filename,".")
+	fileName2 := fileName1[1]
+	fmt.Println("fileName2：" ,fileName2)
+	if fileName2 != "jpg" && fileName2 != "gif" {
+		u.Ctx.WriteString("抱歉，数据类型不正确，请重兴上传")
 		return
 	}
 
@@ -46,12 +55,14 @@ func (u *UploadFileController) Post() {
 	//先查询id
 	user1,err := models.User{Phone:phone}.QueryUserByPhone()
 	if err != nil {
+		fmt.Println("为什么错愕了：",err.Error())
 		u.Ctx.WriteString("抱歉，电子数据认证失败，请等会儿再试")
 	}
 
 	//把上传的文件作为记录保存到数据库中
 	//1、计算md5值
-	md5Hash,err := utils.Sha256HashReader(file)
+	saveFile,err := os.Open(saveFilePath)
+	md5Hash,err := utils.Md5HashReader(saveFile)
 	if err != nil {
 		u.Ctx.WriteString("哇！抱歉，电子数据认证又失败了")
 		return
