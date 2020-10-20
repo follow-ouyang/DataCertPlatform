@@ -11,7 +11,7 @@ import (
 func main() {
 
 	block0 := blockchain.CreateGenesisBlock()
-	block1 := blockchain.NewBlock(block0.Height+1,block0.Hash,[]byte("a"))
+	block1 := blockchain.NewBlock(block0.Height+1,block0.Hash,[]byte("哈"))
 	//block2 := blockchain.NewBlock(block1.Height+1,block1.Hash,[]byte())
 	fmt.Println(block0)
 	fmt.Println(block1)
