@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"DataCertPlatform/blockchain"
-	"bytes"
 	"crypto/md5"
 	sha2562 "crypto/sha256"
 	"encoding/hex"
@@ -67,7 +65,7 @@ func SHA256HashBlock(bs []byte) []byte {
 	//},[]byte{})
 	//2、对转换后的[]byte字节切片输入write方法
 	sha256Hash := sha2562.New()
-	sha256Hash.Write(blockBytes)
+	sha256Hash.Write(bs)
 	hash := sha256Hash.Sum(nil)
 	return hash
 
