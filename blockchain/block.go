@@ -1,8 +1,8 @@
 package blockchain
 
 import (
-	"DataCertPlatform/utils"
 	"bytes"
+	"encoding/gob"
 	"time"
 )
 
@@ -28,22 +28,31 @@ func NewBlock(height int64, prevHash, data []byte) Block {
 		Data:      data,
 		Version:   "0x01",
 	}
-	//1、将block结构体数据转换为[]byte类型
-	heightBytes, _ := utils.Int64ToByte(block.Height)
-	timeStampBytes, _ := utils.Int64ToByte(block.TimeStamp)
-	versionBytes := utils.StringToBytes(block.Version)
-	var blockBytes []byte
-	//bytes.Join  拼接
-	bytes.Join([][]byte{
-		heightBytes,
-		timeStampBytes,
-		block.PrevHash,
-		block.Data,
-		versionBytes,
-	}, []byte{})
-	//调用Hash计算，对区块进行sha256哈希计算
-	block.Hash = utils.SHA256HashBlock(blockBytes)
-	//挖矿竞争，获得记账权
+	//找nonce值，通过工作量证明算法寻找
+	wan := NewPoW(block)
+	hash, nonce := wan.Run()
+	block.Nonce = nonce
+	block.Hash = hash
+
+	////1、将block结构体数据转换为[]byte类型
+	//heightBytes, _ := utils.Int64ToByte(block.Height)
+	//timeStampBytes, _ := utils.Int64ToByte(block.TimeStamp)
+	//versionBytes := utils.StringToBytes(block.Version)
+	//nonceBytes,_ := utils.Int64ToByte(block.Nonce)
+	//
+	//var blockBytes []byte
+	////bytes.Join  拼接
+	//bytes.Join([][]byte{
+	//	heightBytes,
+	//	timeStampBytes,
+	//	block.PrevHash,
+	//	block.Data,
+	//	versionBytes,
+	//	nonceBytes,
+	//}, []byte{})
+	////调用Hash计算，对区块进行sha256哈希计算
+	//block.Hash = utils.SHA256HashBlock(blockBytes)
+	////挖矿竞争，获得记账权
 
 	return block
 }
@@ -54,4 +63,27 @@ func NewBlock(height int64, prevHash, data []byte) Block {
 func CreateGenesisBlock() Block {
 	genesisblock := NewBlock(0, []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, nil)
 	return genesisblock
+}
+
+/*
+对区块进行序列化
+*/
+func (b Block) Serialize() []byte {
+	buff := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buff)
+	encoder.Encode(b) //将区块b放入到序列化编码器中
+	return buff.Bytes()
+}
+
+/*
+区块反序列化操作
+*/
+func DeSerialize(data []byte) (*Block, error) {
+	var block Block
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	err := decoder.Decode(&block)
+	if err != nil {
+		return nil, err
+	}
+	return &block, nil
 }
