@@ -7,7 +7,7 @@ import (
 	"math/big"
 )
 
-const DIFFICULTY = 16
+const DIFFICULTY = 1
 
 /*
 工作量证明算法结构体
