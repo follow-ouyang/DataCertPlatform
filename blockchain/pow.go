@@ -3,11 +3,10 @@ package blockchain
 import (
 	"DataCertPlatform/utils"
 	"bytes"
-	"fmt"
 	"math/big"
 )
 
-const DIFFICULTY = 1
+const DIFFICULTY = 11
 
 /*
 工作量证明算法结构体
@@ -61,7 +60,7 @@ func (p ProofOfWork) Run() ([]byte,int64) {
 		hashBig = new(big.Int)
 		hashBig = hashBig.SetBytes(blockHash)
 		target := p.Target //目标值
-		fmt.Println("当前尝试的Nonce值：",nonce)
+		//fmt.Println("当前尝试的Nonce值：",nonce)
 		if hashBig.Cmp(target) == -1 {
 			//停止寻找
 			break
