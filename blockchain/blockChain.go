@@ -215,3 +215,41 @@ func (bc *BlockChain) SaveData(data []byte) (Block,error) {
 	//返回值语句，newBlock，err，其中err可能包含错误信息
 	return newBlock,err
 }
+
+/*
+该方法用于根据用户输入的认证号查询到对应的区块信息
+ */
+func (bc BlockChain) QUeryBlockByCertId(cert_id string) (*Block,error) {
+	db := bc.BoltDb
+	var err error
+	var block *Block
+
+
+
+	db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(BUCKET_NAME))
+		if bucket == nil {//判断桶是否存在
+			err = errors.New("查询脸上数据失败,请重试")
+			return err
+		}
+		eachHash := bc.LastHash
+		for  {
+			eachBlockBytes := bucket.Get(eachHash)
+			eachBlock,err := DeSerialize(eachBlockBytes)
+			if err != nil {
+				break
+			}
+			//将遍历到的区块中的数据跟用户提供的认证号进行比较
+			if string(eachBlock.Data) == cert_id {//说明找到区块了
+				block = eachBlock
+				break
+			}
+
+
+			eachHash = eachBlock.PrevHash
+		}
+		return nil
+	})
+	return block,err
+
+}

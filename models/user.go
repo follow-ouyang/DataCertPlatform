@@ -10,6 +10,25 @@ type User struct {
 	Id       int    `form:"id"`
 	Phone    string `form:"phone"`
 	Password string `form:"password"`
+	Name string`form:"name"`//名字
+	Card string`form:"card"`//身份证号
+	Sex string`form:"sex"`//性别
+}
+
+/*
+该方法用于更新数据库中用户记录的实名认证信息
+ */
+func (u User) UpdateUser() (int64,error) {
+	rs,err := db_mysql.Db.Exec("update approve set name = ?,card = ? where phone = ?",u.Name,u.Card,u.Phone)
+	if err != nil {
+		return -1,err
+	}
+	id,err := rs.RowsAffected()
+	if err != nil {
+		return -1,err
+	}
+	return id,err
+
 }
 
 //将用户信息保存到数据库中
@@ -40,10 +59,10 @@ func (u User) AddUser() (int64, error) {
 func (u User) QueryUser() (*User, error) {
 	u.Password = utils.Md5HashString(u.Password)
 
-	row := db_mysql.Db.QueryRow("select phone from approve where phone = ? and password = ?",
+	row := db_mysql.Db.QueryRow("select phone,name,card from approve where phone = ? and password = ?",
 		u.Phone, u.Password)
 
-	err := row.Scan(&u.Phone)
+	err := row.Scan(&u.Phone,&u.Name,&u.Card)
 	if err != nil {
 		return nil, err
 	}

@@ -34,7 +34,7 @@ func (u *UploadFileController) Post() {
 
 	fileName1 := strings.Split(header.Filename,".")
 	fileName2 := fileName1[1]
-	fmt.Println("fileName2：" ,fileName2)
+	//fmt.Println("fileName2：" ,fileName2)
 	if fileName2 != "jpg" && fileName2 != "gif" {
 		u.Ctx.WriteString("抱歉，数据类型不正确，请重兴上传")
 		return
@@ -83,8 +83,34 @@ func (u *UploadFileController) Post() {
 		return
 	}
 
+	user := models.User{
+		Id:       0,
+		Phone:    "",
+		Password: "",
+		Name:     "",
+		Card:     "",
+		Sex:      "",
+	}
+	user,_ = user.QueryUserByPhone()
+
 	//3、用户上传的文件的md5值和sha256值保存到区块链上，即数据上链
-	blockchain.CHAIN.SaveData([]byte(fileHash))
+	certRecord := models.CertRecord{
+		CertId:   []byte(md5Hash),
+		CertHash: fileHash,
+		CertName: user.Name,
+		Phone:    user.Card,
+		CertCard: user.Phone,
+		FileName: header.Filename,
+		FileSize: header.Size,
+		CertTime: ,
+	}
+
+	block,err := blockchain.CHAIN.SaveData([]byte(md5Hash))
+	if err!= nil {
+		u.Ctx.WriteString("抱歉，数据上链失败："+err.Error())
+		return
+	}
+	fmt.Println("恭喜，已将数据保存到区块链中，区块高度是：",block.Height)
 
 	//上传文件保存到数据库成功
 	records,err := models.QueryRecordsUserId(user1.Id)

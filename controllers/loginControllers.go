@@ -4,6 +4,7 @@ import (
 	"DataCertPlatform/models"
 	"fmt"
 	"github.com/astaxie/beego"
+	"strings"
 )
 
 type LoginController struct {
@@ -41,6 +42,14 @@ func (l *LoginController) Post() {
 		fmt.Println(err.Error())
 		return
 	}
+
+	//3、1  增加逻辑，判断用户是否已经实名认证，如果没有则跳转到实名认证页面
+	if strings.TrimSpace(u.Name) == "" || strings.TrimSpace(u.Card) == "" {
+		l.Data["Name"] = u.Name
+		l.TplName = "user_kyc.html"
+		return
+	}
+
 
 	//4、根据查询结果返回客户端相应的信息或页面跳转
 	l.Data["Phone"] = u.Phone//动态数据设置
