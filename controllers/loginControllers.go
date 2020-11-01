@@ -45,7 +45,7 @@ func (l *LoginController) Post() {
 
 	//3、1  增加逻辑，判断用户是否已经实名认证，如果没有则跳转到实名认证页面
 	if strings.TrimSpace(u.Name) == "" || strings.TrimSpace(u.Card) == "" {
-		l.Data["Name"] = u.Name
+		l.Data["Phone"] = user.Phone
 		l.TplName = "user_kyc.html"
 		return
 	}

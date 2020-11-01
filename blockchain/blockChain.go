@@ -223,7 +223,8 @@ func (bc BlockChain) QUeryBlockByCertId(cert_id string) (*Block,error) {
 	db := bc.BoltDb
 	var err error
 	var block *Block
-
+	eachBig := new(big.Int)
+	zeroBig :=big.NewInt(0)
 
 
 	db.View(func(tx *bolt.Tx) error {
@@ -245,6 +246,10 @@ func (bc BlockChain) QUeryBlockByCertId(cert_id string) (*Block,error) {
 				break
 			}
 
+			eachBig.SetBytes(eachBlock.PrevHash)
+			if eachBig.Cmp(zeroBig) == 0 {//到创世区块了,停止遍历
+				break
+			}
 
 			eachHash = eachBlock.PrevHash
 		}

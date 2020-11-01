@@ -19,7 +19,7 @@ type User struct {
 该方法用于更新数据库中用户记录的实名认证信息
  */
 func (u User) UpdateUser() (int64,error) {
-	rs,err := db_mysql.Db.Exec("update approve set name = ?,card = ? where phone = ?",u.Name,u.Card,u.Phone)
+	rs,err := db_mysql.Db.Exec("update approve set name = ?,card = ?,sex = ? where phone = ?",u.Name,u.Card,u.Sex,u.Phone)
 	if err != nil {
 		return -1,err
 	}
@@ -59,7 +59,7 @@ func (u User) AddUser() (int64, error) {
 func (u User) QueryUser() (*User, error) {
 	u.Password = utils.Md5HashString(u.Password)
 
-	row := db_mysql.Db.QueryRow("select phone,name,card from approve where phone = ? and password = ?",
+	row := db_mysql.Db.QueryRow("select phone, name ,card from approve where phone = ? and password = ?",
 		u.Phone, u.Password)
 
 	err := row.Scan(&u.Phone,&u.Name,&u.Card)
@@ -71,11 +71,12 @@ func (u User) QueryUser() (*User, error) {
 
 func (u User) QueryUserByPhone() (*User, error) {
 	row := db_mysql.Db.QueryRow("select id from approve where phone = ?", u.Phone)
+	var user User
 
-	err := row.Scan(&u.Id)
+	err := row.Scan(&user.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &u, err
+	return &user, err
 
 }
