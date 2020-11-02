@@ -39,7 +39,7 @@ func (l *LoginController) Post() {
 	//3、判断数据库的查询结果
 	if err != nil {
 		l.Ctx.WriteString("抱歉，用户登录失败，请重试")
-		fmt.Println(err.Error())
+		fmt.Println("在这里：",err.Error())
 		return
 	}
 

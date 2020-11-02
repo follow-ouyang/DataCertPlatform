@@ -36,7 +36,7 @@ func (c CertRecord) Serialize() ([]byte,error) {
  */
 func DeserializeCertRecord(data []byte) (*CertRecord,error) {
 	var certRecord *CertRecord
-	err := gob.NewDecoder(bytes.NewReader(data)).Decode(certRecord)
+	err := gob.NewDecoder(bytes.NewReader(data)).Decode(&certRecord)
 	return certRecord,err
 
 }

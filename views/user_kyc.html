@@ -204,7 +204,7 @@
                                             class="title-name">个人实名认证</span><!-- react-text: 110 --><!-- /react-text --></p>
                                 <hr style="margin: 20px 0px 0px 80px;">
                                 <div class="ctn back-ctn">
-                                    <form class="content" action="/user_kyc" method="post">
+                                    <form class="content" method="post" action="/user_kyc">
                                         <input name="phone" value="{{.Phone}}" hidden="hidden"/>
                                         <section><span class="required">您的姓名</span>
                                             <div class="row-input input-component" style="position: relative;">
@@ -241,7 +241,7 @@
                                                                                                         value="2"><label
                                                             for="sex-1" style="margin: 0px 20px 0px 4px;">女</label></div>
                                             </div><!-- react-text: 214 --><!-- /react-text --></section>
-                                        <section>
+                                        <section style="width: 1560px ">
                                             <section class="id-card-info id-card-front"><span
                                                         class="required">证件正面照片：</span>
                                                 <div class="id-card-pic">
@@ -275,6 +275,8 @@
                                                         <p class="notes">注：您的证件信息不会被其他网友看到，我们将严格保密，请放心上传</p></div>
                                                 </div>
                                             </section>
+                                        </section>
+
                                             <section class="id-card-info"><span class="required">手持证件照片：</span>
                                                 <div class="id-card-pic">
                                                     <div style="z-index: 5;"><img
@@ -299,12 +301,15 @@
                                                                                                         style="width: 22px; margin-right: 10px; padding: 0px;"><label
                                                             for="accept">同意将以上信息用于平台（第三方）的实名验证。</label></div>
                                             </section>
+
                                             <div class="submit"><span class="blueButton"
                                                                       style="display: none; text-align: center; line-height: 40px; background-color: rgb(238, 238, 238);">提交中</span>
                                                 <button class="blueButton" type="submit" style="display: block;">确认提交
                                                 </button>
                                             </div>
+
                                     </form>
+
                                 </div>
                             </div>
                         </div><!-- react-text: 150 --><!-- /react-text --></div>
