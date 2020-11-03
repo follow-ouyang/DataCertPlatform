@@ -70,10 +70,10 @@ func (u User) QueryUser() (*User, error) {
 }
 
 func (u User) QueryUserByPhone() (*User, error) {
-	row := db_mysql.Db.QueryRow("select id from approve where phone = ?", u.Phone)
+	row := db_mysql.Db.QueryRow("select id,name,card,phone from approve where phone = ?", u.Phone)
 	var user User
 
-	err := row.Scan(&user.Id)
+	err := row.Scan(&user.Id,&user.Name,&user.Card,&user.Phone)
 	if err != nil {
 		return nil, err
 	}

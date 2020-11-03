@@ -3,8 +3,10 @@ package controllers
 import (
 	"DataCertPlatform/blockchain"
 	"DataCertPlatform/models"
+	"DataCertPlatform/utils"
 	"fmt"
 	"github.com/astaxie/beego"
+	"strings"
 )
 
 type CertDataController struct {
@@ -32,6 +34,9 @@ func (c *CertDataController) Get() {
 
 	//反序列化
 	certRecord,err := models.DeserializeCertRecord(block.Data)
+	certRecord.CertIdHex = strings.ToUpper(string(certRecord.CertIdHex))
+	certRecord.CertHashHex = string(certRecord.CertHashHex)
+	certRecord.CertTimeFormat = utils.TimeFormat(certRecord.CertTime,utils.TIME_FORMAT_ONE)
 	//结构体变量
 	c.Data["CertRecord"] = certRecord
 	//3、跳转证书详情页面

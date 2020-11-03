@@ -15,7 +15,23 @@ type UploadFileController struct {
 	beego.Controller
 }
 
+func (u *UploadFileController) Get() {
+	phone := models.User.QueryUser()
+	fmt.Println("phone在这里：",phone)
+	user1,err := models.User{Phone:phone}.QueryUserByPhone()
+	if err != nil {
+		fmt.Println("为什么错愕了：",err.Error())
+		u.Ctx.WriteString("抱歉，电子数据认证失败，请等会儿再试")
+	}
+	records,err := models.QueryRecordsUserId(user1.Id)
+	if err != nil {
+		u.Ctx.WriteString("抱歉，电子数据列表获取失败，请重试")
+		return
+	}
+	u.Data["Records"] = records
+	u.TplName = "list_record.html"
 
+}
 /*
 该post方法用于处理用户在客户端提交的文件
  */

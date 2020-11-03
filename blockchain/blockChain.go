@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"DataCertPlatform/models"
 	"errors"
 	"github.com/bolt"
 	"math/big"
@@ -241,7 +242,11 @@ func (bc BlockChain) QUeryBlockByCertId(cert_id string) (*Block,error) {
 				break
 			}
 			//将遍历到的区块中的数据跟用户提供的认证号进行比较
-			if string(eachBlock.Data) == cert_id {//说明找到区块了
+			record,err := models.DeserializeCertRecord(eachBlock.Data)
+			if err != nil {
+				err = errors.New("查询链上数据发生错误")
+			}
+			if string(record.CertId) == cert_id {//说明找到区块了
 				block = eachBlock
 				break
 			}
