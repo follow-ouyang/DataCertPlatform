@@ -20,5 +20,8 @@ func init() {
     beego.Router("/cert_detail.html",&controllers.CertDataController{})
 	//用户实名认证请求
 	beego.Router("/user_kyc",&controllers.UserKycController{})
+    beego.Router("/send_sms",&controllers.SendSmsController{})
+    //短信验证请求
+    beego.Router("/login_sms",&controllers.LoginSmsController{})
 
 }
