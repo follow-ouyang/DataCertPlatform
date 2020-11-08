@@ -23,12 +23,15 @@ func (s *SendSmsController) Post() {
 		s.Ctx.WriteString("发送验证码数据解析失败")
 		return
 	}
+
 	phone := smsLogin.Phone
 	code := utils.GenRandCode(6)//返回一个6位数的随机数
+	fmt.Println("这路绝对发送了")
 	result,err := utils.SendSms(phone,code,utils.SMS_TLP_REGISTER)
 	if err != nil {
 		s.Ctx.WriteString("发送验证码失败，请重试")
 	}
+
 	if len(result.BizId) == 0 {
 		s.Ctx.WriteString(result.Message)
 		return
@@ -47,6 +50,7 @@ func (s *SendSmsController) Post() {
 		s.Ctx.WriteString("抱歉，获取验证码失败，请重试")
 		return
 	}
+
 	//保存成功   bizId返回前端
 	s.Data["Phone"] = smsLogin.Phone
 	s.Data["BizId"] = smsRecord.BizId

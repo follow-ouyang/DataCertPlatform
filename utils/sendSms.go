@@ -53,7 +53,7 @@ func SendSms(phone string,code string,template string) (*SmsResult,error) {
 
 	response, err := client.SendSms(request)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("这里也有：",err.Error())
 	}
 	//Biz : business,商业，业务
 	smsResult := &SmsResult{
