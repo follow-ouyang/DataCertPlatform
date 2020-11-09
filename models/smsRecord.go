@@ -14,8 +14,14 @@ type SmsRecord struct {
 /*
 根据用户提交的手机号和短信验证码查询验证码是否正确及正常
  */
-func QuerySmsRecord(bizId string,phone string,code string)  {
-
+func QuerySmsRecord(bizId string,phone string,code string) (*SmsRecord,error) {
+	var sms SmsRecord
+	row := db_mysql.Db.QueryRow("select biz_id,timestamp from sms_record where biz_id = ? and phone = ? and code = ?",bizId,phone,code)
+	err := row.Scan(&sms.BizId,&sms.TimeStamp)
+	if err != nil {
+		return nil,err
+	}
+	return &sms,nil
 }
 
 /*

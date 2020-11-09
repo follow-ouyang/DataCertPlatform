@@ -55,6 +55,6 @@ func (s *SendSmsController) Post() {
 	s.Data["Phone"] = smsLogin.Phone
 	s.Data["BizId"] = smsRecord.BizId
 	//验证码登录
-	s.TplName = "login_sms.html"
+	s.TplName = "login_sms_second.html"
 
 }
